@@ -1,20 +1,23 @@
 from PIL import Image
 import matplotlib.pyplot as plt
 
+
 def carregar_imagem_binaria(caminho):
-    img = Image.open(caminho).convert("L") 
+    img = Image.open(caminho).convert("L")
     largura, altura = img.size
     matriz = []
     for y in range(altura):
         linha = []
         for x in range(largura):
             pixel = img.getpixel((x, y))
-            linha.append(1 if pixel < 128 else 0)  
+            linha.append(1 if pixel < 128 else 0)
         matriz.append(linha)
     return matriz, largura, altura
 
+
 def criar_matriz(linhas, colunas, valor=0):
     return [[valor for _ in range(colunas)] for _ in range(linhas)]
+
 
 def refletir_elemento_estruturante(B):
     linhas = len(B)
@@ -24,6 +27,7 @@ def refletir_elemento_estruturante(B):
         for j in range(colunas):
             refletido[i][j] = B[linhas - 1 - i][colunas - 1 - j]
     return refletido
+
 
 def erosao(A, B):
     linhas_A, colunas_A = len(A), len(A[0])
@@ -68,10 +72,22 @@ def dilatacao(A, B):
     return resultado
 
 
-def mostrar_resultados(original, erodida, dilatada):
+def abertura(A, B):
+    erodida = erosao(A, B)
+    resultado = dilatacao(erodida, B)
+    return resultado
+
+
+def fechamento(A, B):
+    dilatada = dilatacao(A, B)
+    resultado = erosao(dilatada, B)
+    return resultado
+
+
+def mostrar_resultados(original, erodida, dilatada, aberta, fechada):
     imagens = []
-    titulos = ["Original", "Erosão", "Dilatação"]
-    for matriz in [original, erodida, dilatada]:
+    titulos = ["Original", "Erosão", "Dilatação", "Abertura", "Fechamento"]
+    for matriz in [original, erodida, dilatada, aberta, fechada]:
         altura = len(matriz)
         largura = len(matriz[0])
         img = Image.new("L", (largura, altura))
@@ -81,27 +97,31 @@ def mostrar_resultados(original, erodida, dilatada):
                 img.putpixel((x, y), valor)
         imagens.append(img)
 
-    plt.figure(figsize=(12, 4))
+    plt.figure(figsize=(15, 3))
     for i, (img, titulo) in enumerate(zip(imagens, titulos)):
-        plt.subplot(1, 3, i + 1)
+        plt.subplot(1, 5, i + 1)
         plt.imshow(img, cmap='gray')
         plt.title(titulo)
         plt.axis('off')
     plt.tight_layout()
     plt.show()
 
+
 if __name__ == "__main__":
-    entrada = "paisagem2.jpg"     
+    entrada = "paisagem2.jpg"
 
     A, largura, altura = carregar_imagem_binaria(entrada)
 
     B = [
-        [1,1,1],
-        [1,1,1],
-        [1,1,1]
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1]
     ]
 
     erodida = erosao(A, B)
     dilatada = dilatacao(A, B)
+    aberta = abertura(A, B)
+    fechada = fechamento(A, B)
 
-    mostrar_resultados(original=A, erodida=erodida, dilatada=dilatada)
+    mostrar_resultados(original=A, erodida=erodida, dilatada=dilatada,
+                       aberta=aberta, fechada=fechada)
