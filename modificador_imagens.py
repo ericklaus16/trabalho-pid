@@ -68,10 +68,10 @@ def dilatacao(A, B):
     return resultado
 
 
-def mostrar_resultados(erodida, dilatada):
+def mostrar_resultados(original, erodida, dilatada):
     imagens = []
-    titulos = ["Erosão", "Dilatação"]
-    for matriz in [erodida, dilatada]:
+    titulos = ["Original", "Erosão", "Dilatação"]
+    for matriz in [original, erodida, dilatada]:
         altura = len(matriz)
         largura = len(matriz[0])
         img = Image.new("L", (largura, altura))
@@ -91,7 +91,7 @@ def mostrar_resultados(erodida, dilatada):
     plt.show()
 
 if __name__ == "__main__":
-    entrada = "paisagem3.jpg"     
+    entrada = "paisagem2.jpg"     
 
     A, largura, altura = carregar_imagem_binaria(entrada)
 
@@ -104,4 +104,4 @@ if __name__ == "__main__":
     erodida = erosao(A, B)
     dilatada = dilatacao(A, B)
 
-    mostrar_resultados(erodida, dilatada)
+    mostrar_resultados(original=A, erodida=erodida, dilatada=dilatada)
